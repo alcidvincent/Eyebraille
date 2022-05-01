@@ -3,3 +3,4 @@ numpy
 sklearn
 gunicorn
 opencv-contrib-python-headless
+pandas
