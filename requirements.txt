@@ -4,3 +4,4 @@ sklearn
 gunicorn
 opencv-contrib-python-headless
 pandas
+tensorflow
