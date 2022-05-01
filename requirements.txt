@@ -2,4 +2,3 @@ flask
 numpy
 sklearn
 gunicorn
-cv2
