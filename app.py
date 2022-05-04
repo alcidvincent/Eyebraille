@@ -1,6 +1,5 @@
 from flask import Flask, redirect, render_template,request,jsonify, send_file, send_from_directory,session,app
 import flask
-from flask_ngrok import run_with_ngrok
 import numpy as np
 import sys
 import math
@@ -26,7 +25,6 @@ model_braille = keras.models.load_model('modelBrailleScCNN1.h5')
 
 
 app = Flask(__name__)
-#run_with_ngrok(app)
 
 @app.route('/display')
 def display_image():
@@ -466,6 +464,6 @@ def get_txt():
     return send_file(path, as_attachment=True)
 
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
-    #app.run()
+#if __name__ == '__main__':
+#    app.run(host="0.0.0.0", port=5000, debug=True)
+  
