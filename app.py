@@ -462,7 +462,7 @@ def ong():
 @app.route("/download")
 def get_txt():
     print("Downloading File")
-    path = "C:/Users/Alcid/Desktop/pd/static/hello.txt"
+    path = "/home/Eyebraille/Eyebraille/requirements.txt"
     return send_file(path, as_attachment=True)
 
 
