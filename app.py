@@ -1,14 +1,17 @@
-
-from flask import Flask,request,jsonify
+from flask import Flask, redirect, render_template,request,jsonify, send_file, send_from_directory,session,app
+import flask
+from flask_ngrok import run_with_ngrok
 import numpy as np
 import sys
 import math
 import cv2
 import time
 import pandas as pd
+import werkzeug
 import tensorflow as tf
 import os
 import keras
+from datetime import timedelta
 from sklearn.preprocessing import LabelEncoder
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
@@ -22,16 +25,14 @@ model_braille = keras.models.load_model('modelBrailleScCNN1.h5')
 
 
 
-
 app = Flask(__name__)
+#run_with_ngrok(app)
 
+@app.route('/display')
+def display_image():
+    return redirect("download", code=302)
 
-
-@app.route('/')
-def index():
-    return "Hello world"
-
-@app.route("/ong")
+@app.route("/", methods=['GET', 'POST'])
 def ong():
     class Braille:
         count = 0
@@ -46,7 +47,11 @@ def ong():
 
     # 1) read input image
     start = time.time()
-    input_img = cv2.imread('test/names.png', cv2.IMREAD_GRAYSCALE) 
+    imagefile = flask.request.files['image']
+    filename = werkzeug.utils.secure_filename(imagefile.filename)
+    print("\nReceived image File name : " + imagefile.filename)
+    imagefile.save(filename)
+    input_img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE) 
     end = time.time()
     print("1) read input image :", round(((end - start) * 1000), 2), "ms")
 
@@ -443,23 +448,24 @@ def ong():
         finalChar = characters(fin)
         finalText += finalChar
 
+    print(finalText)
+    with open('C:/Users/Alcid/Desktop/pd/static/hello.txt', 'w') as f:
+        f.write(finalText)
+        print("Successfully Created Text file")
+
     
+    #session.permanent = True
+    #app.permanent_session_lifetime = timedelta(minutes=5)
 
-    return (finalText)
-        
-                    
+    return redirect('download', code=302)
 
-@app.route('/predict',methods=['POST'])
-def predict():
-    cgpa = request.form.get('cgpa')
-    iq = request.form.get('iq')
-    profile_score = request.form.get('profile_score')
+@app.route("/download")
+def get_txt():
+    print("Downloading File")
+    path = "C:/Users/Alcid/Desktop/pd/static/hello.txt"
+    return send_file(path, as_attachment=True)
 
-    input_query = np.array([[cgpa,iq,profile_score]])
-
-    result = model.predict(input_query)[0]
-
-    return jsonify({'placement':str(result)})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
+    #app.run()
